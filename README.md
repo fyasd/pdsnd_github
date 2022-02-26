@@ -6,7 +6,10 @@ Feb 26, 2022
 ### Description
 A python script for the analysis of bikeshare data in .csv files.
 
-### Files used
+### Data files
+Uses data sets for Chicago, New York City, and Washington, DC from Jan to Jun, 2017.
+
+### Dependencies
 - pandas
 - matplotlib
 
