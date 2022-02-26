@@ -10,9 +10,20 @@ A python script for the analysis of bikeshare data in .csv files.
 Uses data sets for Chicago, New York City, and Washington, DC from Jan to Jun,
 2017.
 
-### Dependencies
+### Setup
+
+Requires python 3.
+
+Depends on the following packages:
+
 - pandas
 - matplotlib
+
+They can be installed via `pip install <<package>>` if needed.
+
+### Usage
+
+Unzip into the folder containing the CSVs, and run using `python bikeshare.py`.
 
 ### Credits
 1. C. Zhu, "Detect and exclude outliers in a pandas DataFrame,"
