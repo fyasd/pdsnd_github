@@ -182,11 +182,14 @@ def station_stats(df):
     print('The most commonly used end station is',
           df['End Station'].mode()[0])
 
-    # display most frequent combination of start station and end station trip
-    trip = df['Start Station'] + ' to ' + df['End Station']
+    # display most frequent combination of start station and end station trips
+    # group the trips by their stations, and sort the groups by size, in
+    # descending order, returning only the first value's labels ie its stations
+    trip = df.groupby(['Start Station', 'End Station']).agg('size')
+    mode_trip = trip.sort_values(ascending=False).head(1).index[0]
 
     print('The most commonly occurring trip is\u2025\n'
-          'from', trip.mode()[0])
+          f'from {mode_trip[0]} to {mode_trip[1]}')
 
     print(f'\nThis took {time.time() - start_time} seconds.')
     print('\u2015'*39)
