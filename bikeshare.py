@@ -224,21 +224,19 @@ def user_stats(df):
     start_time = time.time()
 
     # display counts of user types
-    subscriber_trips = df['User Type'].value_counts()[0]
-    customer_trips = df['User Type'].value_counts()[1]
+    user_counts = df['User Type'].value_counts()
 
-    print(f'Of the trips taken, {subscriber_trips} were by subscribers\u2012\n'
-          f'and {customer_trips} were by unsubscribed customers\n')
+    print(f'Of the trips taken, {user_counts[0]} were by subscribers\u2012\n'
+          f'and {user_counts[1]} were by unsubscribed customers\n')
 
     # display counts of gender if available
     if 'Gender' in df:
-        male_trips = df['Gender'].value_counts()[0]
-        female_trips = df['Gender'].value_counts()[1]
+        gender_counts = df['Gender'].value_counts()
         unspecified_gender_trips = len(df) - df['Gender'].count()
 
         print('Of the trips taken\u2012for which gender was specified:\n'
-              f'\u2043 {male_trips} trips were taken by males\n'
-              f'\u2043 {female_trips} trips were taken by females\n'
+              f'\u2043 {gender_counts[0]} trips were taken by males\n'
+              f'\u2043 {gender_counts[1]} trips were taken by females\n'
               f'Note: {unspecified_gender_trips} trips were taken by people of'
               ' unspecified gender\n')
 
@@ -247,18 +245,18 @@ def user_stats(df):
         S = df['Birth Year']
         # get the deviation from the mean for each value-in absolute terms
         # index values within 3 standard deviations
-        birth_year_sans_outlier = S[(S-S.mean()).abs() <= 3 * S.std()]
-        mode_year = int(df['Birth Year'].mode())
-        min_year = int(df['Birth Year'].min())
-        max_year = int(df['Birth Year'].max())
-        int_year_sans_outlier = int(birth_year_sans_outlier.min())
+        S_sans_outliers = S[(S-S.mean()).abs() <= 3 * S.std()]
+        mode_year = int(S.mode())
+        min_year = int(S.min())
+        max_year = int(S.max())
+        min_year_sans_outliers = int(S_sans_outliers.min())
         unspecified_year_trips = int(len(df) - df['Birth Year'].count())
 
         print('Of the trips taken\u2012for which birth year was specified:\n'
               f'\u2043 {mode_year} was the most common year of birth\n'
               f'\u2043 {min_year} was the earliest year of birth\n'
               f'\u2043 {max_year} was the latest year of birth\n'
-              f'Note: {int_year_sans_outlier} was the earliest year of birth'
+              f'Note: {min_year_sans_outliers} was the earliest year of birth'
               ' \u2012sans outliers\u2012\n'
               f'Note: {unspecified_year_trips} trips were taken by people of'
               ' unspecified birth year')
