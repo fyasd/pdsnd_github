@@ -12,7 +12,7 @@ Uses data sets for Chicago, New York City, and Washington, DC from Jan to Jun,
 
 ### Setup
 
-Requires python 3.
+Requires python 3.6+
 
 Depends on the following packages:
 
