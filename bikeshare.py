@@ -164,7 +164,7 @@ def time_stats(df, month, day):
     print('The most common start hour is',
           time.strftime("%I %p", hour_time).lstrip("0"))
 
-    print("\nThis took %s seconds." % (time.time() - start_time))
+    print(f'\nThis took {time.time() - start_time} seconds.')
     print('\u2015'*39)
 
 
@@ -182,13 +182,16 @@ def station_stats(df):
     print('The most commonly used end station is',
           df['End Station'].mode()[0])
 
-    # display most frequent combination of start station and end station trip
-    trip = df['Start Station'] + ' to ' + df['End Station']
+    # display most frequent combination of start station and end station trips
+    # group the trips by their stations, and sort the groups by size, in
+    # descending order, returning only the first value's labels ie its stations
+    trip = df.groupby(['Start Station', 'End Station']).agg('size')
+    mode_trip = trip.sort_values(ascending=False).head(1).index[0]
 
     print('The most commonly occurring trip is\u2025\n'
-          'from', trip.mode()[0])
+          f'from {mode_trip[0]} to {mode_trip[1]}')
 
-    print("\nThis took %s seconds." % (time.time() - start_time))
+    print(f'\nThis took {time.time() - start_time} seconds.')
     print('\u2015'*39)
 
 
@@ -201,19 +204,19 @@ def trip_duration_stats(df):
     # display total travel time in a human-readable format
     tot_dur = df['Trip Duration'].sum()
 
-    print('The total travel time is about %s hours\u2012\n'
-          'that amounts to more than %s weeks-worth of cycling!'
-          % (round(tot_dur / 3600), int(tot_dur // 604800)))
+    print(f'The total travel time is about {round(tot_dur / 3600)}'
+          f' hours\u2012\nthat amounts to more than {int(tot_dur // 604800)}'
+          ' weeks-worth of cycling!')
 
     # display median travel time in a human-readable format
     # note: median is more suitable than mean for skewed data
     median_dur = df['Trip Duration'].median()
     mins, secs = divmod(median_dur, 60)
 
-    print('The median travel time is %s minutes and %s seconds'
-          % (int(mins), int(secs)))
+    print(f'The median travel time is {int(mins)} minutes and {int(secs)}'
+          ' seconds')
 
-    print("\nThis took %s seconds." % (time.time() - start_time))
+    print(f'\nThis took {time.time() - start_time} seconds.')
     print('\u2015'*39)
 
 
@@ -224,48 +227,44 @@ def user_stats(df):
     start_time = time.time()
 
     # display counts of user types
-    print('Of the trips taken, %s were by subscribers\u2012\n'
-          'and %s were by unsubscribed customers\n'
-          % (df['User Type'].value_counts()[0],
-             df['User Type'].value_counts()[1]
-             )
-          )
+    user_counts = df['User Type'].value_counts()
+
+    print(f'Of the trips taken, {user_counts[0]} were by subscribers\u2012\n'
+          f'and {user_counts[1]} were by unsubscribed customers\n')
 
     # display counts of gender if available
     if 'Gender' in df:
+        gender_counts = df['Gender'].value_counts()
+        unspecified_gender_trips = len(df) - df['Gender'].count()
+
         print('Of the trips taken\u2012for which gender was specified:\n'
-              '\u2043 %s trips were taken by males\n'
-              '\u2043 %s trips were taken by females\n'
-              'Note: %s trips were taken by people of unspecified gender\n'
-              % (df['Gender'].value_counts()[0],
-                 df['Gender'].value_counts()[1],
-                 len(df) - df['Gender'].count()
-                 )
-              )
+              f'\u2043 {gender_counts[0]} trips were taken by males\n'
+              f'\u2043 {gender_counts[1]} trips were taken by females\n'
+              f'Note: {unspecified_gender_trips} trips were taken by people of'
+              ' unspecified gender\n')
 
     # display earliest, most recent, and most common year of birth if available
     if 'Birth Year' in df:
         S = df['Birth Year']
         # get the deviation from the mean for each value-in absolute terms
         # index values within 3 standard deviations
-        birth_year_sans_outlier = S[(S-S.mean()).abs() <= 3 * S.std()]
+        S_sans_outliers = S[(S-S.mean()).abs() <= 3 * S.std()]
+        mode_year = int(S.mode())
+        min_year = int(S.min())
+        max_year = int(S.max())
+        min_year_sans_outliers = int(S_sans_outliers.min())
+        unspecified_year_trips = int(len(df) - df['Birth Year'].count())
 
         print('Of the trips taken\u2012for which birth year was specified:\n'
-              '\u2043 %s was the most common year of birth\n'
-              '\u2043 %s was the earliest year of birth\n'
-              '\u2043 %s was the latest year of birth\n'
-              'Note: %s was the earliest year of birth \u2012sans'
-              ' outliers\u2012\n'
-              'Note: %s trips were taken by people of unspecified birth year'
-              % (int(df['Birth Year'].mode()),
-                 int(df['Birth Year'].min()),
-                 int(df['Birth Year'].max()),
-                 int(birth_year_sans_outlier.min()),
-                 int(len(df) - df['Birth Year'].count())
-                 )
-              )
+              f'\u2043 {mode_year} was the most common year of birth\n'
+              f'\u2043 {min_year} was the earliest year of birth\n'
+              f'\u2043 {max_year} was the latest year of birth\n'
+              f'Note: {min_year_sans_outliers} was the earliest year of birth'
+              ' \u2012sans outliers\u2012\n'
+              f'Note: {unspecified_year_trips} trips were taken by people of'
+              ' unspecified birth year')
 
-    print("\nThis took %s seconds." % (time.time() - start_time))
+    print(f'\nThis took {time.time() - start_time} seconds.')
     print('\u2015'*39)
 
 
