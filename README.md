@@ -10,6 +10,11 @@ A python script for the analysis of bikeshare data in .csv files.
 Uses data sets for Chicago, New York City, and Washington, DC from Jan to Jun,
 2017.
 
+#### Data extraction
+
+To use the data files, extract them from `data_files.zip` using the file
+archiver tool of your choice (WinZip, PeaZip, etc).
+
 ### Setup
 
 Requires python 3.6+
